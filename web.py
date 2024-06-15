@@ -6,11 +6,11 @@ import tempfile
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/ip')
 def index():
-    return "hello"
+    return '<center><h1>'+request.remote_addr+'</h1></center>'
 
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def upload():
     if request.method == 'GET':
         return render_template('upload.html')
