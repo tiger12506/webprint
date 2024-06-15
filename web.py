@@ -22,10 +22,18 @@ def upload():
             conn.printFile(app.config['printer_name'], fp.name, 'WebPrinter', {})
         return '<p>Now printing %s. Go to the printer!</p>' % upload.filename
 
+@app.route('/printers', methods=['GET'])
+def printers():
+    import pprint
+    result = ""
+    con = cups.Connection()
+    result += pprint.pformat(con.getPrinters())
+    return result
+
 if __name__ == '__main__':
     args = sys.argv
     port = int(args[1])
-    printer_name = args[2]
+    printer_name = cups.Connection().getDefault()
     app.config['printer_name'] = printer_name
     app.run(host='0.0.0.0', port=port)
 
