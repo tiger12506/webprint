@@ -25,15 +25,28 @@ def upload():
 @app.route('/printers', methods=['GET'])
 def printers():
     import pprint
-    result = ""
+    result = "<!DOCTYPE html><html><body><pre>"
     con = cups.Connection()
     result += pprint.pformat(con.getPrinters())
+    result += "</pre></body></html>"
+    return result
+
+@app.route('/queues', methods=['GET'])
+def queues():
+    import pprint
+    result = "<pre>"
+    con = cups.Connection()
+    result += pprint.pformat(con.getJobs(which_jobs='all'))
+    result += "\n\n" + pprint.pformat(con.getJobAttributes(1))
+    result += "</pre>"
     return result
 
 if __name__ == '__main__':
-    args = sys.argv
-    port = int(args[1])
-    printer_name = cups.Connection().getDefault()
-    app.config['printer_name'] = printer_name
-    app.run(host='0.0.0.0', port=port)
+    debug = False
+    if (len(sys.argv) > 1):
+        port = int(sys.argv[1])
+    if (len(sys.argv) > 2):
+        debug = bool(sys.argv[2])
+    app.config['printer_name'] = cups.Connection().getDefault()
+    app.run(host='0.0.0.0', port=port, debug=debug)
 
