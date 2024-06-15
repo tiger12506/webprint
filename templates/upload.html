@@ -29,13 +29,14 @@ function upload() {
         processData: false,
         contentType: false,
         success: function(result) {
-            $('#root').html('Result return from ajax call:\n\n' + result);
+            $('#alert').html(result);
         }
     });
 }
 
 $(document).ready(function() {
   var fb = $("#uploadFileBrowse");
+  var lb = $('#filename');
   fb.on("change", function(event) {
     if (fb[0].files.length == 1) {
         var preview = $("#preview")[0];
@@ -43,6 +44,7 @@ $(document).ready(function() {
 
         reader.onload = function(e) {
             preview.src = reader.result;
+            lb.text(fb[0].files[0].name);
         };
 
         reader.readAsDataURL(fb[0].files[0]);
@@ -54,15 +56,18 @@ $(document).ready(function() {
   <body>
     <h1>Cups Web Print</h1>
 
-    <!-- Contents filled dynamically -->
-    <div id="root"></div>
-
     <img id="preview" class="border" src="" alt="Image preview" />
 
-    <form id="uploadForm" class="form-group">
-        <input type="file" name="file" id="uploadFileBrowse" class="form-control">
+    <div id="alert"></div>
+    <form id="uploadForm" class="input-group">
+        <div class="custom-file">
+            <input type="file" name="file" id="uploadFileBrowse" class="custom-file-input">
+            <label id="filename" class="custom-file-label" for="uploadFileBrowse"></label>
+        </div>
+        <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary oi oi-print" onclick="upload()">Print</button>
+        </div>
     </form>
-    <button class="btn oi oi-print" onclick="upload()">Print</button>
 
     <!-- Bootstrap CDN & dependency -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

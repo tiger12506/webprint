@@ -19,11 +19,13 @@ def index():
 def upload():
     conn = cups.Connection()
     f = request.files['file'] # Refers to the element "name" attribute of the form
+#    print("Submitted file: "+f.filename)
     with tempfile.NamedTemporaryFile() as fp:
         f.save(fp.name)
-#        conn.printFile(app.config['printer_name'], fp.name, 'WebPrinter', {})
+#        print("Saved file as: "+fp.name)
+        conn.printFile(app.config['printer_name'], fp.name, 'WebPrinter', {})
 
-    return "<pre>" + f.filename + " sent successfully!</pre>"
+    return render_template("alert.html", msg=f.filename+" sent successfully!")
 
 @app.route('/printers', methods=['GET'])
 def printers():
@@ -38,7 +40,7 @@ def queues():
     result = "<pre>"
     con = cups.Connection()
     result += pformat(con.getJobs(which_jobs='all'))
-    result += "\n\n" + pprint.pformat(con.getJobAttributes(1))
+    result += "\n\n" + pformat(con.getJobAttributes(44))
     result += "</pre>"
     return result
 
