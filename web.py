@@ -3,40 +3,41 @@ import sys
 from flask import Flask, request, render_template
 import cups
 import tempfile
+from pprint import pformat,pprint
 
 app = Flask(__name__)
 
 @app.route('/ip')
-def index():
+def ip():
     return '<center><h1>'+request.remote_addr+'</h1></center>'
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('upload.html')
+
+@app.route("/upload", methods=['POST'])
 def upload():
-    if request.method == 'GET':
-        return render_template('upload.html')
-    else:
-        conn = cups.Connection()
-        upload = request.files['upload']
-        with tempfile.NamedTemporaryFile() as fp:
-            upload.save(fp.name)
-            conn.printFile(app.config['printer_name'], fp.name, 'WebPrinter', {})
-        return '<p>Now printing %s. Go to the printer!</p>' % upload.filename
+    conn = cups.Connection()
+    f = request.files['file'] # Refers to the element "name" attribute of the form
+    with tempfile.NamedTemporaryFile() as fp:
+        f.save(fp.name)
+#        conn.printFile(app.config['printer_name'], fp.name, 'WebPrinter', {})
+
+    return "<pre>" + f.filename + " sent successfully!</pre>"
 
 @app.route('/printers', methods=['GET'])
 def printers():
-    import pprint
     result = "<!DOCTYPE html><html><body><pre>"
     con = cups.Connection()
-    result += pprint.pformat(con.getPrinters())
+    result += pformat(con.getPrinters())
     result += "</pre></body></html>"
     return result
 
 @app.route('/queues', methods=['GET'])
 def queues():
-    import pprint
     result = "<pre>"
     con = cups.Connection()
-    result += pprint.pformat(con.getJobs(which_jobs='all'))
+    result += pformat(con.getJobs(which_jobs='all'))
     result += "\n\n" + pprint.pformat(con.getJobAttributes(1))
     result += "</pre>"
     return result

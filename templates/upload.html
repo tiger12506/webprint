@@ -3,13 +3,70 @@
   <head>
     <meta charset="utf-8">
     <title>Web Print</title>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Open Iconic SVG Icon Set -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
+    <script>
+function upload() {
+    var form = $('#uploadForm')[0];
+    var fd = new FormData(form);
+
+    $.ajax({
+        url: "/upload",
+        type: "POST",
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function(result) {
+            $('#root').html('Result return from ajax call:\n\n' + result);
+        }
+    });
+}
+
+$(document).ready(function() {
+  var fb = $("#uploadFileBrowse");
+  fb.on("change", function(event) {
+    if (fb[0].files.length == 1) {
+        var preview = $("#preview")[0];
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            preview.src = reader.result;
+        };
+
+        reader.readAsDataURL(fb[0].files[0]);
+    }
+  });
+});
+    </script>
   </head>
   <body>
-    <div>
-      <form action="/" method="post" enctype="multipart/form-data">
-        <input type="file" name="upload"><br>
-        <input type="submit" value="Print">
-      </form>
-    </div>
+    <h1>Cups Web Print</h1>
+
+    <!-- Contents filled dynamically -->
+    <div id="root"></div>
+
+    <img id="preview" class="border" src="" alt="Image preview" />
+
+    <form id="uploadForm" class="form-group">
+        <input type="file" name="file" id="uploadFileBrowse" class="form-control">
+    </form>
+    <button class="btn oi oi-print" onclick="upload()">Print</button>
+
+    <!-- Bootstrap CDN & dependency -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   </body>
 </html>
+
